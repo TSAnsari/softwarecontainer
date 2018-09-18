@@ -170,6 +170,8 @@ ContainerID SoftwareContainerAgent::createContainer(const std::string &config)
     profilepoint("createContainerStart");
     profilefunction("createContainerFunction");
 
+    log_debug() << "Create: " << config << ", Done!\n";
+
     // Set options for this container
     std::unique_ptr<DynamicContainerOptions> options = m_optionParser.parse(config);
     std::unique_ptr<SoftwareContainerConfig> containerConfig = options->toConfig(m_containerConfig);
@@ -192,6 +194,14 @@ pid_t SoftwareContainerAgent::execute(ContainerID containerID,
 {
     profilefunction("executeFunction");
     SoftwareContainerPtr container = getContainer(containerID);
+
+    log_debug() << "Execute: " << containerID << ", " << cmdLine << ", " << workingDirectory << ", " << outputFile << ", Done!\n";
+
+    for (auto &var : env) {
+        log_debug() << "env: " << var.first << "=" << var.second << "\n";
+    }
+
+    log_debug() << "Execute: End!\n";
 
     /*
      * We want to always apply any default capabilities we have. The only way to configure
@@ -276,6 +286,9 @@ void SoftwareContainerAgent::bindMount(const ContainerID containerID,
                                        bool readOnly)
 {
     profilefunction("bindMountFunction");
+
+    log_debug() << "BindMount: " << containerID << ", " << pathInHost << ", " << pathInContainer << ", " << (readOnly ? "true" : "false") << ", Done!\n";
+
     SoftwareContainerPtr container = getContainer(containerID);
 
     bool result = container->bindMount(pathInHost,
@@ -305,6 +318,15 @@ std::vector<std::string> SoftwareContainerAgent::listCapabilities()
 void SoftwareContainerAgent::setCapabilities(const ContainerID &containerID,
                                              const std::vector<std::string> &capabilities)
 {
+
+    log_debug() << "SetCapabilities: " << containerID << ", Done!\n";
+
+    for (auto &cap : capabilities) {
+        log_debug() << "cap: " << cap << "\n";
+    }
+
+    log_debug() << "SetCapabilities: End!\n";
+
     if (capabilities.empty()) {
         log_warning() << "Got empty list of capabilities";
         return;
